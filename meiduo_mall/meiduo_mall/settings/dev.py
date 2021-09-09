@@ -19,7 +19,11 @@ import os,sys
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # 查看导包路径
-print(sys.path)
+# print(sys.path)
+# 追加导包路径指向apps包
+# sys.path.insert(0,'/Users/wtf/Desktop/美多商城学习/meiduo_project/meiduo_mall/meiduo_mall/apps')
+sys.path.insert(0,os.path.join(BASE_DIR,'apps'))
+# print(sys.path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -43,7 +47,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'meiduo_mall.apps.user'   # 用户模块
+    # 'meiduo_mall.apps.users'   # 用户模块
+    'users',  # 用户模块
+    'contents',  # 首页
 ]
 
 MIDDLEWARE = [
@@ -210,3 +216,6 @@ LOGGING = {
         },
     }
 }
+
+# 指定自定义的用户模型类： 值的语法==》'子应用，用户模型类'
+AUTH_USER_MODEL = 'users.User'
