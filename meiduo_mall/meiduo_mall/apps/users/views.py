@@ -7,16 +7,26 @@ from django.urls import reverse
 from django.contrib.auth import login
 
 from users.models import User
+from meiduo_mall.utils.response_code import RETCODE
 # Create your views here.
 
 class UsernameCountView(View):
     """判断用户名是否重复注册"""
-    def get(self,request，username):
+
+    def get(self, request, username):
         """
-        :param username:用户名
-        return:JSON
+        :param request: 请求对象
+        :param username: 用户名
+        :return: JSON
         """
-        pass
+        count = User.objects.filter(username=username).count()
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK', 'count': count})
+
+class MobileCountView(View):
+    """判断手机号是否重复注册"""
+    def get(self,request,mobile):
+        count = User.objects.filter(mobile=mobile).count()
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK', 'count': count})
 
 class RegisterView(View):
     """用户注册"""
