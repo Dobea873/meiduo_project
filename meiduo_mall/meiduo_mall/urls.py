@@ -23,4 +23,6 @@ urlpatterns = [
     url(r'^',include('users.url s',namespace='users')),
     # contents
     url(r'^',include('contents.url s',namespace='contents')),
+    # verifications
+    url(r'^',include('verifications.url s')),
 ]

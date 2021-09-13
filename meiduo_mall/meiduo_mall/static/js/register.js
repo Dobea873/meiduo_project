@@ -11,6 +11,9 @@ let vm = new Vue({
         password2: '',
         mobile: '',
         allow: '',
+        image_code_url: '',
+        uuid: '',
+        image_code: '',
 
         // v-show
         error_name: false,
@@ -18,12 +21,24 @@ let vm = new Vue({
         error_password2: false,
         error_mobile: false,
         error_allow: false,
+        error_image_code: false,
 
         //error_message
         error_name_message: '',
         error_mobile_message: '',
+        error_image_code_message: '',
+    },
+    mounted(){ // 页面加载完会被调用的
+        // 生成图形验证码
+        this.generate_image_code();
+
     },
     methods: {
+    // 生成图形验证码的方法:封装的思想，代码复用
+    generate_image_code(){
+        this.uuid = generateUUID();
+        this.image_code_url = '/image_codes/' + this.uuid + '/';
+    },
     // 校验用户名
     check_username(){
         let re = /^[a-zA-Z0-9_-]{5,20}$/;
@@ -95,8 +110,18 @@ let vm = new Vue({
         .catch(error => {
             console.log(error.response);
         })
-}
+        }
     },
+    // 校验图形验证码
+    check_image_code(){
+        if (this.image_code.length != 4) {
+            this.error_image_code_message = '请输入图形验证码';
+            this.error_image_code = true;
+      } else {
+            this.error_image_code = false;
+      }
+},
+
     // 校验是否勾选协议
     check_allow(){
         if(!this.allow) {
