@@ -4,12 +4,44 @@ from django import http
 import re
 from django.db import DatabaseError
 from django.urls import reverse
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate,logout
 from django_redis import get_redis_connection
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from users.models import User
 from meiduo_mall.utils.response_code import RETCODE
 # Create your views here.
+
+
+class UserInfoView(LoginRequiredMixin, View):
+    """提供用户中心页面"""
+    def get(self,request):
+        # 如果LoginRequiredMixin判断出用户已登录，那么request.user就是登录用户对象
+        context = {
+            'username':request.user.username,
+            'mobile':request.user.mobile,
+            'email':request.user.email,
+            'email_active':request.user.email_active,
+        }
+        return render(request, 'user_center_info.html', context)
+
+
+class LogoutView(View):
+    """用户退出登录"""
+
+    def get(self,request):
+        """实现用户退出登录的逻辑"""
+        # 清除状态保持信息
+        logout(request)
+
+        # 退出登录后重定向首页
+        response = redirect(reverse('contents:index'))
+
+        # 删除cookies中的用户名
+        response.delete_cookie('username')
+
+        # 响应结果
+        return response
 
 
 class LoginView(View):
@@ -50,8 +82,21 @@ class LoginView(View):
             # 记住登录：状态保持周期为两周:默认是两周
             request.session.set_expiry(None)
 
-        # 响应结果:重定向到首页
-        return redirect(reverse('contents:index'))
+        # 响应结果
+        # 先取出next
+        next = request.GET.get('next')
+        if next:
+            # 重定向到next
+            response = redirect(next)
+        else:
+            # 重定向到首页
+            response = redirect(reverse('contents:index'))
+
+        # 为了实现再首页的右上角展示用户名信息，我们需要将用户名缓存到cookie中
+        # response.set_cookie('key','val','expiry')
+        response.set_cookie('username', user.username, max_age=3600 * 24 * 15)
+
+        return response
 
 
 class MobileCountView(View):
@@ -134,8 +179,12 @@ class RegisterView(View):
         # 实现状态保持
         login(request, user)
 
+        # 响应结果:重定向到首页
+        response = redirect(reverse('contents:index'))
+
+        # 为了实现再首页的右上角展示用户名信息，我们需要将用户名缓存到cookie中
+        # response.set_cookie('key','val','expiry')
+        response.set_cookie('username', user.username, max_age=3600 * 24 * 15)
+
         # 响应结果：重定向到首页
-        # return http.HttpResponse('注册成功，重定向到首页')
-        # return redirect('/')
-        # reverse('contents:index') == '/'
-        return redirect(reverse('contents:index'))
+        return response
