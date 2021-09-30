@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'contents',  # 首页
     'verifications', # 验证码模块
     'oauth', # 第三方登录
+    'areas', # 省市区三级联动
 ]
 
 MIDDLEWARE = [
@@ -239,3 +240,17 @@ LOGIN_URL = '/login/'
 QQ_CLIENT_ID = '101518219'
 QQ_CLIENT_SECRET = '418d84ebdc7241efb79536886ae95224'
 QQ_REDIRECT_URI = 'http://www.meiduo.site:8000/oauth_callback'
+
+
+# 邮箱配置
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # 指定邮件后端
+EMAIL_HOST = 'smtp.gmail.com' # 发邮件主机
+EMAIL_PORT = 587 # 发邮件端口
+EMAIL_HOST_USER = 'dobe2a873@gmail.com' # 授权的邮箱
+EMAIL_HOST_PASSWORD = 'Dobe.123' # 邮箱授权时获得的密码，非注册登录密码
+# EMAIL_FROM = '美多商城<dobe2a873@gmail.com>' # 发件人抬头
+EMAIL_USE_TLS  = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# 邮箱验证链接
+EMAIL_VERIFY_URL = 'http://127.0.0.1:8000/emails/verification/'
