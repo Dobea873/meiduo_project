@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'verifications', # 验证码模块
     'oauth', # 第三方登录
     'areas', # 省市区三级联动
+    'goods', # 商品模块
 ]
 
 MIDDLEWARE = [
@@ -254,3 +255,6 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # 邮箱验证链接
 EMAIL_VERIFY_URL = 'http://127.0.0.1:8000/emails/verification/'
+
+# 指定自定义的Django文件存储类
+DEFAULT_FILE_STORAGE = 'meiduo_mall.utils.fastdfs.fdfs_storage.FastDFSStorage'

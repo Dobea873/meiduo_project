@@ -23,6 +23,49 @@ from . import constants
 logger = logging.getLogger('django')
 
 
+class UpdateTitleAddressView(LoginRequiredJSONMixin, View):
+    """更新地址标题"""
+
+    def put(self, request, address_id):
+        """实现更新地址标题逻辑"""
+        # 接收参数title
+        json_dict = json.loads(request.body.decode())
+        title = json_dict.get('title')
+
+        # 校验参数
+        if not title:
+            return http.HttpResponseForbidden('缺少title')
+
+        try:
+            # 查询当前要更新标题的地址
+            address = Address.objects.get(id=address_id)
+            # 将新的地址标题覆盖地址标题
+            address.title = title
+            address.save()
+        except Exception as e:
+            logger.error(e)
+            return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '更新标题失败'})
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': '更新标题成功'})
+
+
+class DefaultAddressView(LoginRequiredJSONMixin, View):
+    """设置默认地址"""
+
+    def put(self,request, address_id):
+        """实现设置默认地址逻辑"""
+        try:
+            # 查询出当前哪个地址会作为登录用户的默认地址
+            address = Address.objects.get(id=address_id)
+
+            # 将指定的地址设置为当前登录用户的默认地址
+            request.user.default_address = address
+            request.user.save()
+        except Exception as e:
+            logger.error(e)
+            return http.JsonResponse({'code':RETCODE.DBERR, 'errmsg': '设置默认地址失败'})
+        # 响应结果
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': '设置默认地址成功'})
+
 
 class UpdateDestoryAddressView(LoginRequiredJSONMixin, View):
     """更新和删除地址"""
@@ -85,6 +128,20 @@ class UpdateDestoryAddressView(LoginRequiredJSONMixin, View):
             "email": address.email
         }
         return http.JsonResponse({'code': RETCODE.OK, 'errmsg': '修改地址成功', 'address': address_dict})
+
+    def delete(self, request, address_id):
+        """删除地址"""
+        # 实现指定地址到逻辑删除：is_delete=True,默认F
+        try:
+            address = Address.objects.get(id=address_id)
+            address.is_deleted = True
+            address.save()
+        except Exception as e:
+            logger.error(e)
+            return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '删除地址失败'})
+
+        # 响应结果：code,errmsg
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': '删除地址成功'})
 
 class AddressCreateView(LoginRequiredJSONMixin, View):
     """新增地址"""
