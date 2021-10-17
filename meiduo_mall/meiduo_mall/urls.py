@@ -19,14 +19,19 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
+    # haystack
+    url(r'^search/', include('haystack.urls')),
+
     # users
-    url(r'^',include('users.url s',namespace='users')),
+    url(r'^',include(('users.url s', "users"),namespace='users')),
     # contents
-    url(r'^',include('contents.url s',namespace='contents')),
+    url(r'^',include(('contents.url s', "contents"),namespace='contents')),
     # verifications
     url(r'^',include('verifications.url s')),
     # oauth
     url(r'^',include('oauth.url s')),
     # areas
     url(r'^',include('areas.url s')),
+    # goods
+    url(r'^',include(('goods.url s', "goods"), namespace='goods')),
 ]

@@ -248,7 +248,8 @@ class AddressView(LoginRequiredMixin, View):
 
         # 构造上下文
         context = {
-            'default_address_id': login_user.default_address_id,
+            # 'default_address_id': login_user.default_address_id,
+            'default_address_id': login_user.default_address_id or '0',
             'addresses': address_list,
         }
 
