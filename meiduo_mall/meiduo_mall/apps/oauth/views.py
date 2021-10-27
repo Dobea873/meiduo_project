@@ -64,7 +64,7 @@ class QQAuthUserView(View):
             response.set_cookie('username', oauth_user.user.username, max_age=3600 * 24 * 15)
 
             # 用户登录成功，合并cookie购物车到redis购物车
-            response = merge_carts_cookies_redis(request=request, user=oauth_user.user, response=response)
+            response = merge_carts_cookies_redis(request=request, user=user, response=response)
 
             # 响应QQ登录结果
             return response
