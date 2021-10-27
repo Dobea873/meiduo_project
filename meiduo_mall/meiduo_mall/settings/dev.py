@@ -55,13 +55,14 @@ INSTALLED_APPS = [
     'areas', # 省市区三级联动
     'goods', # 商品模块
     'haystack', # 全文检索
+    'carts', # 购物车
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -85,19 +86,19 @@ TEMPLATES = [
             'environment': 'meiduo_mall.utils.jinja2_env.jinja2_environment',
         },
     },
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
+    # {
+    #     'BACKEND': 'django.template.backends.django.DjangoTemplates',
+    #     'DIRS': [],
+    #     'APP_DIRS': True,
+    #     'OPTIONS': {
+    #         'context_processors': [
+    #             'django.template.context_processors.debug',
+    #             'django.template.context_processors.request',
+    #             'django.contrib.auth.context_processors.auth',
+    #             'django.contrib.messages.context_processors.messages',
+    #         ],
+    #     },
+    # },
 ]
 
 
@@ -142,6 +143,20 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
          }
     },
+    "history": {   # 用户浏览数据
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://192.168.159.2:6379/3",
+         "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+         }
+    },
+    "carts": {   # 购物车
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://192.168.159.2:6379/4",
+         "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+         }
+    },
 }
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "session"
@@ -171,7 +186,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'  # 跟北京时间差8个小时
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 

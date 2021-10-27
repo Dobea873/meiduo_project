@@ -29,5 +29,7 @@ urlpatterns = [
     # 设置默认地址
     url(r'^addresses/(?P<address_id>\d+)/default/$',views.DefaultAddressView.as_view()),
     # 更新地址标题
-    url(r'^^addresses/(?P<address_id>\d+)/title/$',views.UpdateTitleAddressView.as_view()),
+    url(r'^addresses/(?P<address_id>\d+)/title/$',views.UpdateTitleAddressView.as_view()),
+    # 用户浏览记录
+    url(r'^browse_histories/$', views.UserBrowseHistory.as_view()),
 ]
