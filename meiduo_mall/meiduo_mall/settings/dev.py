@@ -57,6 +57,8 @@ INSTALLED_APPS = [
     'haystack', # 全文检索
     'carts', # 购物车
     'orders', # 订单
+    'payment', # 支付
+    'django_crontab', # 定时任务
 ]
 
 MIDDLEWARE = [
@@ -111,13 +113,21 @@ WSGI_APPLICATION = 'meiduo_mall.wsgi.application'
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    'default': { # 写（主机）
         'ENGINE': 'django.db.backends.mysql', # 数据库引擎
         'HOST': '192.168.159.2', # 数据库主机
         'PORT': 3306, # 数据库端口
         'USER': 'dobe', # 数据库用户名
         'PASSWORD': '123456', # 数据库用户密码
         'NAME': 'meiduo' # 数据库名字
+    },
+    'slave': { # 读（从机）
+        'ENGINE': 'django.db.backends.mysql',
+        'HOST': '192.168.159.2',
+        'PORT': 8306,
+        'USER': 'root',
+        'PASSWORD': '123456',
+        'NAME': 'meiduo'
     }
 }
 
@@ -294,3 +304,21 @@ HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 # haystack分页时每页记录条数
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 5
+
+# 支付宝
+ALIPAY_APPID = '2016082100308405'
+ALIPAY_DEBUG = True
+ALIPAY_URL = 'https://openapi.alipaydev.com/gateway.do'
+ALIPAY_RETURN_URL = 'http://www.meiduo.site:8000/payment/status/'
+
+# 定时器配置
+CRONJOBS = [
+    # 每1分钟生成一次首页静态文件
+    ('*/1 * * * *', 'contents.crons.generate_static_index_html', '>> ' + os.path.join(os.path.dirname(BASE_DIR), 'logs/crontab.log'))
+]
+
+# 指定中文编码格式
+CRONTAB_COMMAND_PREFIX = 'LANG_ALL=zh_cn.UTF-8'
+
+# Mysql读写分离路由
+DATABASE_ROUTERS = ['meiduo_mall.utils.db_router.MasterSlaveDBRouter']
